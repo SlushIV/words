@@ -33,8 +33,19 @@ public class Main {
             return;
         }
 
+        // common words setup
+        try {
+            System.out.println("Loading common words...");
+            engine.loadCommonWords("google-10000-english.txt");
+        } catch (IOException e) {
+            System.err.println("file error");
+            scanner.close();
+            return;
+        }
+
         // secret word setup
-        Word secretWord = engine.getWord("fire"); 
+        Word target = engine.selectRandomWord();
+        System.out.println(target.getText()); // for testing, remove in production
 
         // game
         System.out.println("\n--- Game Started! ---");
@@ -44,8 +55,8 @@ public class Main {
             String input = scanner.nextLine().toLowerCase().trim();
 
             // correct guess
-            if (input.equals(secretWord.getText())) {
-                System.out.println("CONGRATS! You found the word: " + secretWord.getText());
+            if (input.equals(target.getText())) {
+                System.out.println("CONGRATS! You found the word: " + target.getText());
                 break;
             }
 
@@ -65,7 +76,7 @@ public class Main {
             }
 
             // incorrect guess -> calculate similarity and add to history
-            double score = calculateSimilarity(secretWord.getVector(), userWord.getVector());
+            double score = calculateSimilarity(target.getVector(), userWord.getVector());
             history.add(new Guess(userWord, score));
 
             // sort for ranking

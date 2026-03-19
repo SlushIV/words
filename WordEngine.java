@@ -3,6 +3,7 @@ import java.util.*;
 
 public class WordEngine {
     private Map<String, Word> dictionaryMap = new HashMap<>();
+    private Map<String, Integer> wordRanking = new HashMap<>();
     List<String> commonWords = new ArrayList<>();
 
     // selects a random word from the dictionary
@@ -55,7 +56,43 @@ public class WordEngine {
         System.out.println("Loaded " + dictionaryMap.size() + " words.");
     }
 
+    public void rankSimilarity(Word target) {
+    
+        // calculate similarity for all words and sort them
+        List<Word> words = new ArrayList<>(dictionaryMap.values());
+        words.sort((word1, word2) -> Double.compare(
+            calculateSimilarity(target.getVector(), word2.getVector()),
+            calculateSimilarity(target.getVector(), word1.getVector())
+        ));
+
+        // store ranking in map
+        wordRanking.clear();
+        for (int i = 0; i < words.size(); i++) {
+            wordRanking.put(words.get(i).getText(), i);
+        }
+
+    }
+
     public Word getWord(String key) {
         return dictionaryMap.get(key.toLowerCase());
     }
+
+    public int getRanking(String key) {
+        return wordRanking.get(key.toLowerCase());
+    }
+
+    public static double calculateSimilarity(float[] vecA, float[] vecB) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+
+        for (int i = 0; i < vecA.length; i++) {
+            dotProduct += vecA[i] * vecB[i];
+            normA += Math.pow(vecA[i], 2);
+            normB += Math.pow(vecB[i], 2);
+        }
+
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
 }

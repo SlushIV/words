@@ -3,20 +3,6 @@ import java.io.*;
 
 public class Main {
 
-    public static double calculateSimilarity(float[] vecA, float[] vecB) {
-        double dotProduct = 0.0;
-        double normA = 0.0;
-        double normB = 0.0;
-
-        for (int i = 0; i < vecA.length; i++) {
-            dotProduct += vecA[i] * vecB[i];
-            normA += Math.pow(vecA[i], 2);
-            normB += Math.pow(vecB[i], 2);
-        }
-
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    }
-
     public static void main(String[] args) {
 
         WordEngine engine = new WordEngine();
@@ -47,6 +33,9 @@ public class Main {
         Word target = engine.selectRandomWord();
         System.out.println(target.getText()); // for testing, remove in production
 
+        // calculate similarity ranking for all words
+        engine.rankSimilarity(target);
+
         // game
         System.out.println("\n--- Game Started! ---");
 
@@ -76,17 +65,17 @@ public class Main {
             }
 
             // incorrect guess -> calculate similarity and add to history
-            double score = calculateSimilarity(target.getVector(), userWord.getVector());
+            int score = engine.getRanking(input);
             history.add(new Guess(userWord, score));
 
             // sort for ranking
             Collections.sort(history);
 
-            // print guesses
-            System.out.println("\n--- Top Guesses ---");
+            // print guesses from history list
+            System.out.println("\n--- Guesses ---");
             for (int i = 0; i < history.size(); i++) {
                 Guess g = history.get(i);
-                System.out.printf("%d. %s (%.2f%%)\n", (i+1), g.getWord().getText(), g.getSimilarity() * 100);
+                System.out.printf("%d. %s (%d)\n", (i+1), g.getWord().getText(), g.getScore());
             }
         }
         scanner.close();

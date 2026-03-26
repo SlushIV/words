@@ -13,40 +13,9 @@
     -fx-border-color: #334155;
     -fx-padding: 12 15; /* Top/Bottom 12, Left/Right 15 */
     -fx-font-size: 14px;
-}
-
-/* outer box */
-.text-area {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #94a3b8;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-border-color: #334155;
-    -fx-padding: 12 15; /* Top/Bottom 12, Left/Right 15 */
-    -fx-font-size: 16px;
-}
-
-/* inner box */
-.text-area .content {
-    -fx-background-color: #1e293b;
-
-    -fx-background-radius: 15px;
-    -fx-border-radius: 15px;
-
-    -fx-padding: 10px;
-}
-
-/* scrollbar fix */
-.text-area .scroll-pane {
-    -fx-background-color: transparent;
-}
-.text-area .scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-.text-area .scroll-bar {
-    -fx-opacity: 0;
-    -fx-transition: 0.3s;
+    -fx-pref-width: 600;
+    -fx-pref-height: 50;
+    -fx-max-width: 600;
 }
 
 .button {
@@ -56,8 +25,53 @@
     -fx-background-radius: 25;
     -fx-padding: 12 30;
     -fx-cursor: hand;
+    -fx-pref-width: 600;
+    -fx-pref-height: 50;
+    -fx-max-width: 600;
 }
 
 .button:hover {
     -fx-background-color: #7dd3fc;
+}
+
+.label {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #94a3b8;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: #334155;
+    -fx-padding: 12 15; /* Top/Bottom 12, Left/Right 15 */
+    -fx-font-size: 14px;
+}
+
+.guess-row {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 30;
+    -fx-padding: 5 10 5 10;
+    -fx-pref-width: 800;
+    -fx-pref-height: 60;
+    -fx-max-width: 800;
+    -fx-max-height: 60;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.guess-row:hover {
+    -fx-background-color: #38bdf8;
+}
+
+.guess-row .label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent; /* Removes the default thin border */
+    -fx-padding: 0;
+}
+
+/* 2. The 'Window' inside (The most important part) */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
 }

@@ -2,9 +2,10 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,19 +25,21 @@ public class Window extends Application {
 
         TextField inputField = new TextField();
         inputField.setPromptText("Type your word here...");
-        inputField.setMaxWidth(600);
-        inputField.setPrefWidth(600);
-        inputField.setPrefHeight(50);
 
         Button guessButton = new Button("SUBMIT GUESS");
-        guessButton.setMaxWidth(600);
-        guessButton.setPrefWidth(600);
-        guessButton.setPrefHeight(50);
 
-        TextArea historyDisplay = new TextArea("Waiting for your first guess...");
-        historyDisplay.setEditable(false);
-        historyDisplay.setPrefHeight(400);
-        historyDisplay.setMaxWidth(600);
+        Label status = new Label("Waiting for your first guess...");
+        status.setPrefWidth(600);
+        status.setMaxWidth(600);
+        status.setPrefHeight(50);
+
+        VBox guessContainer = new VBox(5);
+        guessContainer.setAlignment(Pos.CENTER);
+
+        ScrollPane scrollPane = new ScrollPane(guessContainer);
+        scrollPane.setFitToWidth(true);      // Makes the VBox match the ScrollPane's width
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide horizontal
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide vertical
 
         // on guess button press
         guessButton.setOnAction(e -> {
@@ -45,13 +48,12 @@ public class Window extends Application {
 
             // invalid guess
             if (userWord == null) {
-                System.out.println("Word not in dictionary. Try another.");
+                status.setText("word not found");
             }
 
             // correct guess
             else if (userWord.equals(target)) {
-                historyDisplay.setText("\nCONGRATS! You found it! The word was: " + target.getText());
-                System.out.println("equal");
+                status.setText("CONGRATS! You found it! The word was: " + target.getText());
 
             // incorrect guess
             } else {
@@ -61,27 +63,33 @@ public class Window extends Application {
                 Guess userGuess = new Guess(engine.getWord(input), score);
 
                 if (history.contains(userGuess)) {
-                    // idk some indicator placeholder
+                    status.setText("already guessed dumbahh");
 
                 } else {
+                    status.setText("try again");
+
                     history.add(userGuess);
                     Collections.sort(history);
+                    int index = history.indexOf(userGuess);
 
-                    // Update the UI text area
-                    StringBuilder sb = new StringBuilder("--- Guesses ---\n");
-                    for (Guess g : history) {
-                        sb.append(g.getWord().getText()).append(" (").append(g.getScore()).append(")\n");
-                    }
-                    historyDisplay.setText(sb.toString());
+                    Label left = new Label(input);
+                    Label right = new Label(score + "");
+                    Region spacer = new Region();
+
+                    HBox.setHgrow(spacer, Priority.ALWAYS); // This forces the spacer to take all available space
+                    HBox guess = new HBox(left, spacer, right);
+                    guess.getStyleClass().add("guess-row");
+
+                    guessContainer.getChildren().add(index, guess);
                 }
             }
             inputField.clear();
         });
 
         // vertical layout
-        VBox layout = new VBox(25, inputField, guessButton, historyDisplay);
-        layout.setAlignment(Pos.CENTER);
-        layout.setMaxWidth(800);
+        VBox layout = new VBox(25, inputField, guessButton, status, scrollPane);
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setMaxWidth(900);
         layout.setPadding(new Insets(30));
 
         Scene scene = new Scene(layout, 1000, 700);

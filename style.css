@@ -142,17 +142,6 @@
     -fx-font-weight: bold;
 }
 
-/* --- Rank Heatmap Highlights --- */
-.rank-top100 {
-    -fx-background-color: linear-gradient(to right, #7c2d12, #9a3412);
-    -fx-border-color: #f59e0b;
-}
-
-.rank-top1000 {
-    -fx-background-color: linear-gradient(to right, #451a03, #78350f);
-    -fx-border-color: #d97706;
-}
-
 /* --- Scroll Container --- */
 .scroll-pane {
     -fx-background-color: transparent;

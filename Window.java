@@ -1,6 +1,4 @@
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -9,123 +7,95 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 public class Window extends Application {
 
-    private final WordEngine engine = new WordEngine();
-    private final List<Guess> history = new ArrayList<>();
-    private Word target;
+    public GameController gameController;
+
+    public VBox guessContainer;
+    public Label statusLabel;
+    public Label timerLabel;
+    public Label guessCountLabel;
+    public TextField inputField;
+    public Button guessButton;
 
     @Override
     public void start(Stage stage) {
 
-        gameSetup();
+        // header
+        Label titleLabel = new Label("words apart...");
+        titleLabel.getStyleClass().add("title");
 
-        TextField inputField = new TextField();
+        timerLabel = new Label("03:00");
+        timerLabel.getStyleClass().add("timer");
+
+        guessCountLabel = new Label("Guesses: 0");
+        guessCountLabel.getStyleClass().add("guess-counter");
+
+        Region headerSpacer = new Region();
+        HBox.setHgrow(headerSpacer, Priority.ALWAYS);
+
+        HBox header = new HBox(titleLabel, headerSpacer, timerLabel, guessCountLabel);
+        header.getStyleClass().add("header-bar");
+
+        // input
+        inputField = new TextField();
         inputField.setPromptText("Type your word here...");
+        HBox.setHgrow(inputField, Priority.ALWAYS);
 
-        Button guessButton = new Button("SUBMIT GUESS");
+        guessButton = new Button("Submit Guess");
 
-        Label status = new Label("Waiting for your first guess...");
-        status.setPrefWidth(600);
-        status.setMaxWidth(600);
-        status.setPrefHeight(50);
+        HBox inputRow = new HBox(inputField, guessButton);
+        inputRow.getStyleClass().add("input-row");
 
-        VBox guessContainer = new VBox(5);
-        guessContainer.setAlignment(Pos.CENTER);
+        // status
+        statusLabel = new Label("Waiting for your first guess...");
+        statusLabel.getStyleClass().add("status-label");
+
+        VBox inputCol = new VBox(inputRow, statusLabel);
+        inputCol.getStyleClass().add("input-col");
+
+        // guess container wrapped in scroll panel
+        guessContainer = new VBox();
+        guessContainer.getStyleClass().add("guess-container");
 
         ScrollPane scrollPane = new ScrollPane(guessContainer);
-        scrollPane.setFitToWidth(true);      // Makes the VBox match the ScrollPane's width
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide horizontal
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide vertical
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        // on guess button press
-        guessButton.setOnAction(e -> {
+        // submit guess
+        Runnable submitGuess = () -> {
             String input = inputField.getText().toLowerCase().trim();
-            Word userWord = engine.getWord(input);
-
-            // invalid guess
-            if (userWord == null) {
-                status.setText("word not found");
+            if (!input.isEmpty()) {
+                gameController.processGuess(input);
+                inputField.clear();
             }
+        };
 
-            // correct guess
-            else if (userWord.equals(target)) {
-                status.setText("CONGRATS! You found it! The word was: " + target.getText());
+        guessButton.setOnAction(e -> submitGuess.run());
+        inputField.setOnAction(e -> submitGuess.run());
 
-            // incorrect guess
-            } else {
+        // root layout
+        VBox layout = new VBox(header, inputCol, scrollPane);
+        layout.getStyleClass().add("main-layout");
 
-                // calculating score
-                int score = engine.getRanking(input);
-                Guess userGuess = new Guess(engine.getWord(input), score);
+        Scene scene = new Scene(layout, 950, 720);
 
-                if (history.contains(userGuess)) {
-                    status.setText("already guessed dumbahh");
+        // css
+        try {
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Could not load style.css");
+        }
 
-                } else {
-                    status.setText("try again");
-
-                    history.add(userGuess);
-                    Collections.sort(history);
-                    int index = history.indexOf(userGuess);
-
-                    Label left = new Label(input);
-                    Label right = new Label(score + "");
-                    Region spacer = new Region();
-
-                    HBox.setHgrow(spacer, Priority.ALWAYS); // This forces the spacer to take all available space
-                    HBox guess = new HBox(left, spacer, right);
-                    guess.getStyleClass().add("guess-row");
-
-                    guessContainer.getChildren().add(index, guess);
-                }
-            }
-            inputField.clear();
-        });
-
-        // vertical layout
-        VBox layout = new VBox(25, inputField, guessButton, status, scrollPane);
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.setMaxWidth(900);
-        layout.setPadding(new Insets(30));
-
-        Scene scene = new Scene(layout, 1000, 700);
-
-        // LINK YOUR CSS FILE HERE
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm());
+        gameController = new GameController(this);
+        gameController.gameSetup();
 
         stage.setScene(scene);
-        stage.setTitle("Word Similarity Game");
+        stage.setTitle("words");
         stage.show();
-    }
-
-    private void gameSetup() {
-        // dictionary setup
-        try {
-            System.out.println("Loading dictionary...");
-            engine.loadVectors("glove.6B.50d.txt");
-        } catch (IOException e) {
-            System.err.println("file error");
-            return;
-        }
-
-        // common words setup
-        try {
-            System.out.println("Loading common words...");
-            engine.loadCommonWords("google-10000-english.txt");
-        } catch (IOException e) {
-            System.err.println("file error");
-            return;
-        }
-
-        // secret word setup
-        target = engine.selectRandomWord();
-        System.out.println(target.getText()); // for testing, remove in production
-
-        // calculate similarity ranking for all words
-        engine.rankSimilarity(target);
     }
 }

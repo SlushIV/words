@@ -1,77 +1,167 @@
+/* --- Theme Tokens & Base Typography --- */
 .root {
-    -fx-background-color: #2b2b2b;
-    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-bg-main: #0d1117;
+    -fx-bg-surface: #161b22;
+    -fx-bg-surface-hover: #1c2128;
+    -fx-border-muted: #30363d;
+    -fx-accent-primary: #38bdf8;
+    -fx-accent-hover: #7dd3fc;
+    -fx-text-primary: #f0f6fc;
+    -fx-text-muted: #8b949e;
+    -fx-text-placeholder: #484f58;
+
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", "Courier New", monospace;
+    -fx-background-color: -fx-bg-main;
 }
 
-/* input field */
+/* --- Shared Surface Styling --- */
+.timer,
+.guess-counter,
+.text-field,
+.status-label,
+.guess-row {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: -fx-border-muted;
+    -fx-border-width: 1px;
+}
+
+/* --- Container & Layout Spacing --- */
+.main-layout {
+    -fx-alignment: top-center;
+    -fx-max-width: 850px;
+    -fx-padding: 24px;
+    -fx-spacing: 20px; /* Equal vertical spacing between header, guessCol, scrollPane */
+}
+
+.header-bar {
+    -fx-alignment: center;
+    -fx-max-width: 800px;
+    -fx-spacing: 15px;
+    -fx-padding: 0;
+}
+
+.input-row {
+    -fx-alignment: center;
+    -fx-max-width: 800px;
+    -fx-spacing: 12px;
+}
+
+.input-col {
+    -fx-alignment: top-center;
+    -fx-max-width: 800px;
+    -fx-spacing: 12px;
+}
+
+.guess-container {
+    -fx-alignment: top-center;
+    -fx-padding: 4px 8px;
+    -fx-spacing: 8px;
+}
+
+/* --- Header Section --- */
+.title {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+.timer, .guess-counter {
+    -fx-padding: 8px 16px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.timer {
+    -fx-text-fill: -fx-accent-primary;
+}
+
+.guess-counter {
+    -fx-text-fill: -fx-text-muted;
+}
+
+/* --- Inputs & Buttons --- */
 .text-field {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #94a3b8;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-border-color: #334155;
-    -fx-padding: 12 15; /* Top/Bottom 12, Left/Right 15 */
+    -fx-text-fill: -fx-text-primary;
+    -fx-prompt-text-fill: -fx-text-placeholder;
+    -fx-padding: 10px 16px;
     -fx-font-size: 14px;
-    -fx-pref-width: 600;
-    -fx-pref-height: 50;
-    -fx-max-width: 600;
+    -fx-pref-height: 42px;
+}
+
+.text-field:focused {
+    -fx-border-color: -fx-accent-primary;
+    -fx-background-color: -fx-bg-surface-hover;
 }
 
 .button {
-    -fx-background-color: #38bdf8;
-    -fx-text-fill: #0f172a;
+    -fx-background-color: -fx-accent-primary;
+    -fx-text-fill: -fx-bg-main;
     -fx-font-weight: bold;
-    -fx-background-radius: 25;
-    -fx-padding: 12 30;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: transparent;
+    -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-pref-width: 600;
-    -fx-pref-height: 50;
-    -fx-max-width: 600;
-}
-
-.button:hover {
-    -fx-background-color: #7dd3fc;
-}
-
-.label {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #94a3b8;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-border-color: #334155;
-    -fx-padding: 12 15; /* Top/Bottom 12, Left/Right 15 */
+    -fx-pref-height: 42px;
     -fx-font-size: 14px;
 }
 
+.button:hover {
+    -fx-background-color: -fx-accent-hover;
+}
+
+/* --- Status & Guess Rows --- */
+.status-label {
+    -fx-text-fill: -fx-text-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 16px;
+    -fx-pref-height: 42px;
+    -fx-alignment: CENTER;
+    -fx-max-width: infinity; /* Allows label to stretch to the parent's max-width (800px) */
+}
+
 .guess-row {
-    -fx-background-color: #34495e;
-    -fx-background-radius: 30;
-    -fx-padding: 5 10 5 10;
-    -fx-pref-width: 800;
-    -fx-pref-height: 60;
-    -fx-max-width: 800;
-    -fx-max-height: 60;
+    -fx-border-color: transparent;
+    -fx-padding: 10px 16px;
+    -fx-pref-width: 600px;
+    -fx-max-width: 600px;
+    -fx-pref-height: 42px;
     -fx-alignment: CENTER_LEFT;
 }
 
 .guess-row:hover {
-    -fx-background-color: #38bdf8;
+    -fx-background-color: -fx-bg-surface-hover;
 }
 
 .guess-row .label {
-    -fx-text-fill: white;
+    -fx-text-fill: -fx-text-primary;
     -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }
 
+/* --- Rank Heatmap Highlights --- */
+.rank-top100 {
+    -fx-background-color: linear-gradient(to right, #7c2d12, #9a3412);
+    -fx-border-color: #f59e0b;
+}
+
+.rank-top1000 {
+    -fx-background-color: linear-gradient(to right, #451a03, #78350f);
+    -fx-border-color: #d97706;
+}
+
+/* --- Scroll Container --- */
 .scroll-pane {
     -fx-background-color: transparent;
-    -fx-border-color: transparent; /* Removes the default thin border */
+    -fx-border-color: transparent;
     -fx-padding: 0;
+    -fx-pref-width: 800px;
+    -fx-max-width: 800px;
 }
 
-/* 2. The 'Window' inside (The most important part) */
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }

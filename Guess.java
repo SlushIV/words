@@ -9,7 +9,6 @@ public class Guess implements Comparable<Guess> {
         this.score = score;
     }
 
-    // This allows you to sort guesses from "closest" to "farthest"
     @Override
     public int compareTo(Guess other) {
         return Integer.compare(this.score, other.score);
